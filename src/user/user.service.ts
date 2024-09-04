@@ -1,21 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, User } from '@prisma/client';
-import * as bcrypt from 'bcrypt'; 
-import { log } from 'console';
+import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { Prisma, User } from "@prisma/client";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: Prisma.UserCreateInput) {
+    const user = await this.prisma.user.findUnique({
+      where: { useremail: data.useremail },
+    });
+    if (user) {
+      return {
+        success: false,
+        message: "Adresse email est utilisé deja",
+      };
+    }
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const userData = { ...data, password: hashedPassword };
     await this.prisma.user.create({ data: userData });
 
     return {
-      message: 'Utilisateur créé avec succès',
+      success: true,
+      message: "Utilisateur créé avec succès",
     };
   }
 
@@ -26,30 +35,50 @@ export class UserService {
   async findOne(id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException("User not found");
     }
     return user;
   }
 
-  async findOneByEmail(useremail:string): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: {useremail} });
+  async findOneByEmail(useremail: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { useremail } });
     return user;
   }
 
-  async update(id: number, data: Prisma.UserUpdateInput) {
+  async update(id: number, data: Prisma.UserCreateInput) {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
+    
     await this.prisma.user.update({
       where: { id },
       data,
     });
+    
     return {
-      message: 'Utilisateur modifié avec succès',
+      success: true,
+      message: "Utilisateur modifié avec succès",
     };
   }
 
   async remove(id: number) {
     await this.prisma.user.delete({ where: { id } });
     return {
-      message: 'Utilisateur supprimé avec succès',
+      success: true,
+      message: "Utilisateur supprimé avec succès",
     };
+  }
+
+  async verifyPassword(email: string, password: string) {
+    const user = await this.findOneByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException("Email introuvable");
+    }
+    const passwordTrue = await bcrypt.compare(password, user.password);
+    if (!passwordTrue) {
+      throw new UnauthorizedException("Mot de passe incorect");
+    } else {
+      return true;
+    }
   }
 }

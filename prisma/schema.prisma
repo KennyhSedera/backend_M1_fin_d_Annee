@@ -13,6 +13,7 @@ model User {
   useremail String  @unique
   password String 
   status String 
+  role String 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -24,4 +25,12 @@ model Enseignant {
   prenom String
   contact String
   grade String
+}
+
+model Matiere {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
