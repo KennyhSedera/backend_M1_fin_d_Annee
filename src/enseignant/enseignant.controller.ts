@@ -1,34 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { EnseignantService } from './enseignant.service';
-import { Prisma } from '@prisma/client';
-import { log } from 'console';
+import { Controller } from '@nestjs/common';
 
 @Controller('enseignant')
-export class EnseignantController {
-    constructor(private service: EnseignantService) { }
-
-    @Get()
-    findAll() {
-        return this.service.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id') id:string) {
-        return this.service.findOne(+id);
-    }
-
-    @Post()
-    create(@Body() data: Prisma.EnseignantCreateInput) {
-        return this.service.create(data);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() data: Prisma.EnseignantUpdateInput) {
-        return this.service.update(+id, data);
-    }
-
-    @Delete(':id')
-    delete(@Param('id') id: string) {
-        return this.service.delete(+id);
-    }
-}
+export class EnseignantController {}
