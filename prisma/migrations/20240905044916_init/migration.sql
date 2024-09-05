@@ -53,9 +53,18 @@ CREATE TABLE `ParcoursNiveau` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `UniteEnseignement` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `niveauId` INTEGER NULL,
+    `parcoursId` INTEGER NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `volume_horaire` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `uniteEnseignement` VARCHAR(191) NOT NULL,
     `elementConstitutif` VARCHAR(191) NOT NULL,
     `semestre` VARCHAR(191) NOT NULL,
     `et` INTEGER NULL,
@@ -65,6 +74,7 @@ CREATE TABLE `volume_horaire` (
     `creditEC` DOUBLE NOT NULL,
     `poidsEC` DOUBLE NOT NULL,
     `parcoursNiveauId` INTEGER NULL,
+    `uniteEnseignementId` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -81,9 +91,11 @@ CREATE TABLE `Grade` (
 -- CreateTable
 CREATE TABLE `Enseignant` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `codeEns` VARCHAR(191) NOT NULL,
     `nom` VARCHAR(191) NOT NULL,
     `prenom` VARCHAR(191) NOT NULL,
     `contact` VARCHAR(191) NOT NULL,
+    `CIN` VARCHAR(191) NOT NULL,
     `gradeId` INTEGER NULL,
     `type` VARCHAR(191) NOT NULL,
 
@@ -140,7 +152,16 @@ ALTER TABLE `ParcoursNiveau` ADD CONSTRAINT `parcoursNiveau_parcours_fkey` FOREI
 ALTER TABLE `ParcoursNiveau` ADD CONSTRAINT `parcoursNiveau_niveau_fkey` FOREIGN KEY (`niveauId`) REFERENCES `Niveau`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `UniteEnseignement` ADD CONSTRAINT `uniteEnseignement_niveau_fkey` FOREIGN KEY (`niveauId`) REFERENCES `Niveau`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UniteEnseignement` ADD CONSTRAINT `uniteEnseignement_parcours_fkey` FOREIGN KEY (`parcoursId`) REFERENCES `Parcours`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `volume_horaire` ADD CONSTRAINT `volume_horaire_parcoursNiveauId_fkey` FOREIGN KEY (`parcoursNiveauId`) REFERENCES `ParcoursNiveau`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `volume_horaire` ADD CONSTRAINT `volume_horaire_uniteEnseignementId_fkey` FOREIGN KEY (`uniteEnseignementId`) REFERENCES `UniteEnseignement`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Enseignant` ADD CONSTRAINT `Enseignant_gradeId_fkey` FOREIGN KEY (`gradeId`) REFERENCES `Grade`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

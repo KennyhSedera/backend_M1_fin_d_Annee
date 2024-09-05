@@ -31,6 +31,7 @@ model Parcours {
   mention         Mention          @relation(fields: [mentionId], references: [id], map: "parcours_mention_fkey")
   parcoursNiveaux ParcoursNiveau[]
   volumesHoraire  VolumeHoraire[]  @relation("parcours_volume_horaire_fkey")
+  uniteEnseignements UniteEnseignement[] @relation("parcours_unite_enseignement_fkey")
 }
 
 model Niveau {
@@ -39,6 +40,7 @@ model Niveau {
   parcoursNiveaux      ParcoursNiveau[]
   volumesHoraire       VolumeHoraire[]      @relation("niveau_volume_horaire_fkey")
   heuresComplementaires HeuresComplementaire[]
+  uniteEnseignements    UniteEnseignement[]  @relation("niveau_unite_enseignement_fkey")
 }
 
 model ParcoursNiveau {
@@ -55,9 +57,20 @@ model ParcoursNiveau {
   volumesHoraire     VolumeHoraire[]
 }
 
+model UniteEnseignement {
+  id              Int            @id @default(autoincrement())
+  name            String
+  niveauId        Int?
+  parcoursId      Int?
+  
+  niveau          Niveau?        @relation(fields: [niveauId], references: [id], map: "uniteEnseignement_niveau_fkey", name: "niveau_unite_enseignement_fkey")
+  parcours        Parcours?      @relation(fields: [parcoursId], references: [id], map: "uniteEnseignement_parcours_fkey", name: "parcours_unite_enseignement_fkey")
+  
+  volumeHoraire   VolumeHoraire[]
+}
+
 model VolumeHoraire {
   id                    Int                       @id @default(autoincrement())
-  uniteEnseignement     String
   elementConstitutif    String
   semestre              String
   et                    Int?
@@ -68,6 +81,8 @@ model VolumeHoraire {
   poidsEC               Float
   parcoursNiveauId      Int?
   parcoursNiveau        ParcoursNiveau?           @relation(fields: [parcoursNiveauId], references: [id])
+  uniteEnseignementId   Int?
+  uniteEnseignement     UniteEnseignement?        @relation(fields: [uniteEnseignementId], references: [id])
   enseignantVolumeHoraire EnseignantVolumeHoraire[]
 
   parcours              Parcours[]                @relation("parcours_volume_horaire_fkey")
@@ -85,11 +100,13 @@ model Grade {
 
 model Enseignant {
   id                      Int                      @id @default(autoincrement())
+  codeEns                 String
   nom                     String
   prenom                  String
   contact                 String
+  CIN                     String
   gradeId                 Int?
-  grade                   Grade?                   @relation(fields: [gradeId], references: [id], name: "grade_enseignant") // Correction ici : rendre 'grade' optionnel
+  grade                   Grade?                   @relation(fields: [gradeId], references: [id], name: "grade_enseignant") 
   type                    String
   enseignantVolumeHoraire EnseignantVolumeHoraire[]
   heuresComplementaires   HeuresComplementaire[]
