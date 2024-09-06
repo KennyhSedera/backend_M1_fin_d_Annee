@@ -25,7 +25,10 @@ export class ParcoursNiveauController {
   }
 
   @Put(':id')
-  updatre(@Param('id') id: string, data: Prisma.ParcoursNiveauUpdateInput) {
+  updatre(
+    @Param('id') id: string,
+    @Body() data: Prisma.ParcoursNiveauUpdateInput,
+  ) {
     return this.service.update(+id, data);
   }
 

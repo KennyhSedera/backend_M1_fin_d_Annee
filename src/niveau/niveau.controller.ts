@@ -25,7 +25,7 @@ export class NiveauController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, data: Prisma.NiveauUpdateInput) {
+  update(@Param('id') id: string, @Body() data: Prisma.NiveauUpdateInput) {
     return this.service.update(+id, data);
   }
 

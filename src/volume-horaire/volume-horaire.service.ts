@@ -16,7 +16,17 @@ export class VolumeHoraireService {
   }
 
   async findAll() {
-    return this.prisma.volumeHoraire.findMany();
+    return this.prisma.volumeHoraire.findMany({
+      include: {
+        uniteEnseignement: true,
+        parcoursNiveau: {
+          include: { 
+            niveau: true, 
+            parcours: true 
+          },
+        },
+      },
+    });
   }
 
   async update(id: number, data: Prisma.VolumeHoraireUpdateInput) {

@@ -108,6 +108,7 @@ export class EnseignantVolumeHoraireService {
       totalTheo,
       totalPra,
       salaire,
+      VH,
     };
   }
 

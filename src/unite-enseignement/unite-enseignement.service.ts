@@ -21,7 +21,6 @@ export class UniteEnseignementService {
         parcours: {
           include: { mention: true },
         },
-        volumeHoraire: true,
       },
     });
   }

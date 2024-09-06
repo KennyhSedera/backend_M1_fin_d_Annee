@@ -28,13 +28,14 @@ export class GradeController {
   update(
     @Param('id')
     id: string,
+    @Body()
     data: Prisma.GradeUpdateInput,
   ) {
     return this.service.update(+id, data);
   }
 
   @Delete(':id')
-  delete(@Param() id: string) {
+  delete(@Param('id') id: string) {
     return this.service.delete(+id);
   }
 }

@@ -24,7 +24,10 @@ export class VolumeHoraireController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, data: Prisma.VolumeHoraireUpdateInput) {
+  update(
+    @Param('id') id: string,
+    @Body() data: Prisma.VolumeHoraireUpdateInput,
+  ) {
     return this.service.update(+id, data);
   }
 

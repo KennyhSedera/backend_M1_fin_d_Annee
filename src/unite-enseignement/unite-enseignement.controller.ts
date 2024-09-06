@@ -25,7 +25,10 @@ export class UniteEnseignementController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, data: Prisma.UniteEnseignementUpdateInput) {
+  update(
+    @Param('id') id: string,
+    @Body() data: Prisma.UniteEnseignementUpdateInput,
+  ) {
     return this.service.update(+id, data);
   }
 

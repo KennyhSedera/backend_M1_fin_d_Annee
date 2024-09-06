@@ -25,7 +25,7 @@ export class MentionController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, data: Prisma.MentionUpdateInput) {
+  update(@Param('id') id: string, @Body() data: Prisma.MentionUpdateInput) {
     return this.service.update(+id, data);
   }
 

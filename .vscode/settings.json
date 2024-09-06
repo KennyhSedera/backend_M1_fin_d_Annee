@@ -6,7 +6,7 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.suggest.completeFunctionCalls": true,
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "svipas.prettier-plus",
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "files.autoSave": "onFocusChange",
