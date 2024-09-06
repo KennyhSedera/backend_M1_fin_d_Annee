@@ -28,7 +28,7 @@ model Parcours {
   id              Int              @id @default(autoincrement())
   nom             String
   mentionId       Int
-  mention         Mention          @relation(fields: [mentionId], references: [id], map: "parcours_mention_fkey")
+  mention         Mention          @relation(fields: [mentionId], references: [id], onDelete: Cascade, map: "parcours_mention_fkey")
   parcoursNiveaux ParcoursNiveau[]
   volumesHoraire  VolumeHoraire[]  @relation("parcours_volume_horaire_fkey")
   uniteEnseignements UniteEnseignement[] @relation("parcours_unite_enseignement_fkey")
@@ -39,7 +39,6 @@ model Niveau {
   nom                  String
   parcoursNiveaux      ParcoursNiveau[]
   volumesHoraire       VolumeHoraire[]      @relation("niveau_volume_horaire_fkey")
-  heuresComplementaires HeuresComplementaire[]
   uniteEnseignements    UniteEnseignement[]  @relation("niveau_unite_enseignement_fkey")
 }
 
@@ -52,9 +51,10 @@ model ParcoursNiveau {
   nombreGroupesET    Int
   nombreGroupesED    Int
   nombreGroupesEP    Int
-  parcours           Parcours        @relation(fields: [parcoursId], references: [id], map: "parcoursNiveau_parcours_fkey")
-  niveau             Niveau          @relation(fields: [niveauId], references: [id], map: "parcoursNiveau_niveau_fkey")
+  parcours           Parcours        @relation(fields: [parcoursId], references: [id], onDelete: Cascade, map: "parcoursNiveau_parcours_fkey")
+  niveau             Niveau          @relation(fields: [niveauId], references: [id], onDelete: Cascade, map: "parcoursNiveau_niveau_fkey")
   volumesHoraire     VolumeHoraire[]
+  heuresComplementaires HeuresComplementaire[]
 }
 
 model UniteEnseignement {
@@ -63,8 +63,8 @@ model UniteEnseignement {
   niveauId        Int?
   parcoursId      Int?
   
-  niveau          Niveau?        @relation(fields: [niveauId], references: [id], map: "uniteEnseignement_niveau_fkey", name: "niveau_unite_enseignement_fkey")
-  parcours        Parcours?      @relation(fields: [parcoursId], references: [id], map: "uniteEnseignement_parcours_fkey", name: "parcours_unite_enseignement_fkey")
+  niveau          Niveau?        @relation(fields: [niveauId], references: [id], onDelete: Cascade, map: "uniteEnseignement_niveau_fkey", name: "niveau_unite_enseignement_fkey")
+  parcours        Parcours?      @relation(fields: [parcoursId], references: [id], onDelete: Cascade, map: "uniteEnseignement_parcours_fkey", name: "parcours_unite_enseignement_fkey")
   
   volumeHoraire   VolumeHoraire[]
 }
@@ -80,9 +80,9 @@ model VolumeHoraire {
   creditEC              Float
   poidsEC               Float
   parcoursNiveauId      Int?
-  parcoursNiveau        ParcoursNiveau?           @relation(fields: [parcoursNiveauId], references: [id])
+  parcoursNiveau        ParcoursNiveau?           @relation(fields: [parcoursNiveauId], references: [id], onDelete: Cascade)
   uniteEnseignementId   Int?
-  uniteEnseignement     UniteEnseignement?        @relation(fields: [uniteEnseignementId], references: [id])
+  uniteEnseignement     UniteEnseignement?        @relation(fields: [uniteEnseignementId], references: [id], onDelete: Cascade)
   enseignantVolumeHoraire EnseignantVolumeHoraire[]
 
   parcours              Parcours[]                @relation("parcours_volume_horaire_fkey")
@@ -106,7 +106,7 @@ model Enseignant {
   contact                 String
   CIN                     String
   gradeId                 Int?
-  grade                   Grade?                   @relation(fields: [gradeId], references: [id], name: "grade_enseignant") 
+  grade                   Grade?                   @relation(fields: [gradeId], references: [id], name: "grade_enseignant", onDelete:Cascade) 
   type                    String
   enseignantVolumeHoraire EnseignantVolumeHoraire[]
   heuresComplementaires   HeuresComplementaire[]
@@ -115,19 +115,20 @@ model Enseignant {
 model EnseignantVolumeHoraire {
   id              Int             @id @default(autoincrement())
   enseignantId    Int
-  enseignant      Enseignant      @relation(fields: [enseignantId], references: [id], map: "enseignantVolumeHoraire_enseignant_fkey")
+  enseignant      Enseignant      @relation(fields: [enseignantId], references: [id], onDelete: Cascade, map: "enseignantVolumeHoraire_enseignant_fkey")
   volumeHoraireId Int
-  volumeHoraire   VolumeHoraire   @relation(fields: [volumeHoraireId], references: [id], map: "enseignantVolumeHoraire_volumeHoraire_fkey")
+  volumeHoraire   VolumeHoraire   @relation(fields: [volumeHoraireId], references: [id], onDelete: Cascade, map: "enseignantVolumeHoraire_volumeHoraire_fkey")
 }
 
 model HeuresComplementaire {
   id               Int            @id @default(autoincrement())
   enseignantId     Int
-  niveauId         Int
-  nbEncadrement    Int
-  tauxEncadrement  Int
-  nbSoutenance     Int
-  tauxSoutenance   Int
-  enseignant       Enseignant     @relation(fields: [enseignantId], references: [id], map: "heuresComplementaire_enseignant_fkey")
-  niveau           Niveau         @relation(fields: [niveauId], references: [id], map: "heuresComplementaire_niveau_fkey")
+  uniteEnseignement String
+  parcoursNiveauId         Int
+  nbEncadrement    Int?
+  tauxEncadrement  Int?
+  nbSoutenance     Int?
+  tauxSoutenance   Int?
+  enseignant       Enseignant  @relation(fields: [enseignantId], references: [id], onDelete: Cascade, map: "heuresComplementaire_enseignant_fkey")
+  parcoursNiveau   ParcoursNiveau  @relation(fields: [parcoursNiveauId], references: [id], onDelete: Cascade, map: "heuresComplementaire_niveau_fkey")
 }

@@ -5,7 +5,7 @@ import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(data: Prisma.UserCreateInput) {
     const user = await this.prisma.user.findUnique({
@@ -49,12 +49,12 @@ export class UserService {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
     }
-    
+
     await this.prisma.user.update({
       where: { id },
       data,
     });
-    
+
     return {
       success: true,
       message: "Utilisateur modifié avec succès",

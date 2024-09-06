@@ -26,5 +26,8 @@
   "prettier.tabWidth": 2,
   "prettier.useTabs": false,
   "editor.fontSize": 13,
-  "prettier.endOfLine": "lf"
+  "prettier.endOfLine": "lf",
+  "[typescript]": {
+    "editor.defaultFormatter": "svipas.prettier-plus"
+  }
 }
