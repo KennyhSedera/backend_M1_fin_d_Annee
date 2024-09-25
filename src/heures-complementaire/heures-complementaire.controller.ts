@@ -21,7 +21,12 @@ export class HeuresComplementaireController {
 
   @Get()
   findAll() {
-    return this.service.findAll();
+    return this.service.findAllGroupByEns();
+  }
+
+  @Get('ens')
+  findAllEnsEncSout() {
+    return this.service.findAllEnsEncSout();
   }
 
   @Put(':id')

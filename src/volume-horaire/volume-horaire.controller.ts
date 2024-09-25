@@ -23,6 +23,16 @@ export class VolumeHoraireController {
     return this.service.findAll();
   }
 
+  @Get('all/:parcours')
+  findAllByParcoursEns(@Param('parcours') parcours: string) {
+    return this.service.findAllByParcoursEns(parcours);
+  }
+
+  @Get(':parcours')
+  findAllParcours(@Param('parcours') parcours: string) {
+    return this.service.findAllParcours(parcours);
+  }
+
   @Put(':id')
   update(
     @Param('id') id: string,

@@ -1,218 +1,37 @@
 [
   {
-    "id": 1,
-    "enseignantId": 3,
-    "volumeHoraireId": 1,
-    "enseignant": {
-      "id": 3,
-      "codeEns": "V01",
-      "nom": "RASOLOARIJAONA",
-      "prenom": "Madison",
-      "contact": "034 38 039 51",
-      "CIN": "102 661 005 985",
-      "gradeId": 3,
-      "type": "Vacataire",
-      "grade": {
-        "id": 3,
-        "title": "MC",
-        "taux": 8000
-      }
-    },
-    "volumeHoraire": {
-      "id": 1,
-      "elementConstitutif": "Base d'algebre 1",
-      "semestre": "S1",
-      "et": 24,
-      "ed": 24,
-      "ep": null,
-      "creditUE": 12,
-      "creditEC": 3,
-      "poidsEC": 0.25,
-      "parcoursNiveauId": 1,
-      "uniteEnseignementId": 1,
-      "uniteEnseignement": {
-        "id": 1,
-        "name": "Mathématiques pour l'informatique 1",
-        "niveauId": 1,
-        "parcoursId": 3
+    "codeEns": "P01",
+    "nomEns": "RAMAMONJISOA Andriantiana Bertin Olivier",
+    "decompteParcours": [
+      {
+        "parcours": "Génie logiciel et Base de données (GB)",
+        "encadrementTotal": 290,
+        "soutenanceTotal": 48
       },
-      "parcoursNiveau": {
-        "id": 1,
-        "parcoursId": 3,
-        "niveauId": 1,
-        "anneeUniversitaire": "2022-2023",
-        "nombreEtudiants": 215,
-        "nombreGroupesET": 2,
-        "nombreGroupesED": 3,
-        "nombreGroupesEP": 10
+      {
+        "parcours": "Administration Système et Réseaux (SR)",
+        "encadrementTotal": 40,
+        "soutenanceTotal": 8
       }
-    }
+    ],
+    "totalEncadrement": 330,
+    "totalSoutenance": 56
   },
   {
-    "id": 2,
-    "enseignantId": 3,
-    "volumeHoraireId": 2,
-    "enseignant": {
-      "id": 3,
-      "codeEns": "V01",
-      "nom": "RASOLOARIJAONA",
-      "prenom": "Madison",
-      "contact": "034 38 039 51",
-      "CIN": "102 661 005 985",
-      "gradeId": 3,
-      "type": "Vacataire",
-      "grade": {
-        "id": 3,
-        "title": "MC",
-        "taux": 8000
-      }
-    },
-    "volumeHoraire": {
-      "id": 2,
-      "elementConstitutif": "Base d'analyse 1",
-      "semestre": "S1",
-      "et": 24,
-      "ed": 24,
-      "ep": null,
-      "creditUE": 12,
-      "creditEC": 3,
-      "poidsEC": 0.25,
-      "parcoursNiveauId": 1,
-      "uniteEnseignementId": 1,
-      "uniteEnseignement": {
-        "id": 1,
-        "name": "Mathématiques pour l'informatique 1",
-        "niveauId": 1,
-        "parcoursId": 3
+    "codeEns": "V01",
+    "nomEns": "RASOLOARIJAONA Madison",
+    "decompteParcours": [
+      {
+        "parcours": "Génie logiciel et Base de données (GB)",
+        "encadrementTotal": 0,
+        "soutenanceTotal": 0
       },
-      "parcoursNiveau": {
-        "id": 1,
-        "parcoursId": 3,
-        "niveauId": 1,
-        "anneeUniversitaire": "2022-2023",
-        "nombreEtudiants": 215,
-        "nombreGroupesET": 2,
-        "nombreGroupesED": 3,
-        "nombreGroupesEP": 10
-      }
-    }
-  },
-  {
-    "id": 3,
-    "enseignantId": 3,
-    "volumeHoraireId": 3,
-    "enseignant": {
-      "id": 3,
-      "codeEns": "V01",
-      "nom": "RASOLOARIJAONA",
-      "prenom": "Madison",
-      "contact": "034 38 039 51",
-      "CIN": "102 661 005 985",
-      "gradeId": 3,
-      "type": "Vacataire",
-      "grade": {
-        "id": 3,
-        "title": "MC",
-        "taux": 8000
-      }
-    },
-    "volumeHoraire": {
-      "id": 3,
-      "elementConstitutif": "Base d'algebre 2",
-      "semestre": "S3",
-      "et": 26,
-      "ed": 16,
-      "ep": null,
-      "creditUE": 12,
-      "creditEC": 3,
-      "poidsEC": 0.25,
-      "parcoursNiveauId": 3,
-      "uniteEnseignementId": 5,
-      "uniteEnseignement": {
-        "id": 5,
-        "name": "Mathématiques pour l'informatique 2",
-        "niveauId": 2,
-        "parcoursId": 3
-      },
-      "parcoursNiveau": {
-        "id": 3,
-        "parcoursId": 3,
-        "niveauId": 2,
-        "anneeUniversitaire": "2022-2023",
-        "nombreEtudiants": 291,
-        "nombreGroupesET": 2,
-        "nombreGroupesED": 4,
-        "nombreGroupesEP": 15
-      }
-    }
-  },
-  {
-    "id": 4,
-    "enseignantId": 3,
-    "volumeHoraireId": 4,
-    "enseignant": {
-      "id": 3,
-      "codeEns": "V01",
-      "nom": "RASOLOARIJAONA",
-      "prenom": "Madison",
-      "contact": "034 38 039 51",
-      "CIN": "102 661 005 985",
-      "gradeId": 3,
-      "type": "Vacataire",
-      "grade": {
-        "id": 3,
-        "title": "MC",
-        "taux": 8000
-      }
-    },
-    "volumeHoraire": {
-      "id": 4,
-      "elementConstitutif": "Base d'algebre 2",
-      "semestre": "S3",
-      "et": 24,
-      "ed": 16,
-      "ep": null,
-      "creditUE": 8,
-      "creditEC": 2,
-      "poidsEC": 0.25,
-      "parcoursNiveauId": 4,
-      "uniteEnseignementId": 6,
-      "uniteEnseignement": {
-        "id": 6,
-        "name": "Mathématiques pour l'informatique 2",
-        "niveauId": 2,
-        "parcoursId": 4
-      },
-      "parcoursNiveau": {
-        "id": 4,
-        "parcoursId": 4,
-        "niveauId": 2,
-        "anneeUniversitaire": "2022-2023",
-        "nombreEtudiants": 84,
-        "nombreGroupesET": 1,
-        "nombreGroupesED": 1,
-        "nombreGroupesEP": 4
-      }
-    }
+      {
+        "parcours": "Administration Système et Réseaux (SR)",
+        "encadrementTotal": 0,
+        "soutenanceTotal": 0
+      }],
+    "totalEncadrement": 0,
+    "totalSoutenance": 0
   }
 ]
-modifier la code suivante pour calculer la somme de (ET = et*nombreGroupesET), (ED=ed*nombreGroupesED) et (EP=ep*nombreGroupesEP)
-par enseignantId 
-  async findAll(id: number) {
-    return await this.prisma.enseignantVolumeHoraire.findMany({
-      where: { enseignantId: id },
-      include: {
-        enseignant: {
-          include: {
-            grade: true,
-          },
-        },
-        volumeHoraire: {
-          include: {
-            uniteEnseignement: true,
-            parcoursNiveau: true,
-          },
-        },
-      },
-    });
-  }

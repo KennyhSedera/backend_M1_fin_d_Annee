@@ -23,6 +23,10 @@ export class UniteEnseignementController {
   findAll() {
     return this.service.findAll();
   }
+  @Get(':parcours')
+  findAllByParcours(@Param('parcours') parcours: string) {
+    return this.service.findAllByParcours(parcours);
+  }
 
   @Put(':id')
   update(

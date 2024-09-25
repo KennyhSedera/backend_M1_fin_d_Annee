@@ -13,6 +13,7 @@ model User {
   useremail String   @unique
   password  String 
   status    String 
+  userPhoto      String?
   role      String 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -105,9 +106,11 @@ model Enseignant {
   prenom                  String
   contact                 String
   CIN                     String
-  gradeId                 Int?
+  gradeId                 Int
+  Oblig                   Int? @default(0)
   grade                   Grade?                   @relation(fields: [gradeId], references: [id], name: "grade_enseignant", onDelete:Cascade) 
   type                    String
+  ensPhoto      String?
   enseignantVolumeHoraire EnseignantVolumeHoraire[]
   heuresComplementaires   HeuresComplementaire[]
 }

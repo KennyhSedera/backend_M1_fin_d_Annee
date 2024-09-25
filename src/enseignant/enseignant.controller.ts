@@ -18,12 +18,23 @@ export class EnseignantController {
   create(@Body() data: Prisma.EnseignantUncheckedCreateInput) {
     return this.service.create(data);
   }
+
   @Get()
   findAll() {
     return this.service.findAll();
   }
 
-  @Get(':id')
+  @Get('/decompteTheo')
+  findAllDecomptTheo() {
+    return this.service.findAllDecomptTheo();
+  }
+
+  @Get('/decomptePra')
+  findAllDecomptPra() {
+    return this.service.findAllDecomptPra();
+  }
+
+  @Get('/:id')
   findOne(@Param('id') id: string) {
     return this.service.findOne(+id);
   }

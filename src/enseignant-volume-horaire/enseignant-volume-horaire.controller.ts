@@ -9,19 +9,35 @@ import {
 } from '@nestjs/common';
 import { EnseignantVolumeHoraireService } from './enseignant-volume-horaire.service';
 import { Prisma } from '@prisma/client';
+import { parcoursNiveauDto } from './parcoursNiveauDto';
 
 @Controller('enseignant-volume-horaire')
 export class EnseignantVolumeHoraireController {
   constructor(private readonly service: EnseignantVolumeHoraireService) {}
 
-  @Get()
-  findAllEns() {
-    return this.service.findAll();
+  @Get(':type')
+  findAllEns(@Param('type') type: string) {
+    return this.service.findAll(type);
   }
 
   @Get('ens/:id')
   findOneEns(@Param('id') id: string) {
     return this.service.findOneEns(+id);
+  }
+
+  @Post('ec')
+  findAllEC(@Body() data: parcoursNiveauDto) {
+    return this.service.findAllEC(data);
+  }
+
+  @Post('EnsEcVh')
+  findAllEnsEcVh(@Body() data: parcoursNiveauDto) {
+    return this.service.findAllEnsEcVh(data);
+  }
+
+  @Post('ens')
+  findAllGrByEns(@Body() data: parcoursNiveauDto) {
+    return this.service.getTeachingData(data);
   }
 
   @Post()
