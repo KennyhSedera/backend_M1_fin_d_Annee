@@ -24,11 +24,11 @@ export class HeuresComplementaireService {
             prenom: true,
           },
         },
-        parcoursNiveau: {
-          select: { niveau: true },
+        niveau: {
+          select: { nom: true },
         },
       },
-      orderBy: { parcoursNiveauId: 'asc' },
+      orderBy: { niveauId: 'asc' },
     });
 
     const data = result.map((hc) => ({
@@ -36,17 +36,13 @@ export class HeuresComplementaireService {
       codeEns: hc.enseignant.codeEns,
       nomEns: hc.enseignant.nom + ' ' + hc.enseignant.prenom,
       UE: hc.uniteEnseignement,
-      niveau: hc.parcoursNiveau.niveau.nom,
-      enc: {
-        nb: hc.nbEncadrement,
-        taux: hc.tauxEncadrement,
-        total: hc.nbEncadrement * hc.tauxEncadrement,
-      },
-      sout: {
-        nb: hc.nbSoutenance,
-        taux: hc.tauxSoutenance,
-        total: hc.nbSoutenance * hc.tauxSoutenance,
-      },
+      niveau: hc.niveau.nom,
+      nbEncadrement: hc.nbEncadrement,
+      tauxEncadrement: hc.tauxEncadrement,
+      totalEncadrement: hc.nbEncadrement * hc.tauxEncadrement,
+      nbSoutenance: hc.nbSoutenance,
+      tauxSoutenance: hc.tauxSoutenance,
+      totalSoutenance: hc.nbSoutenance * hc.tauxSoutenance,
       total_HC_RD:
         hc.nbSoutenance * hc.tauxSoutenance +
         hc.nbEncadrement * hc.tauxEncadrement,
@@ -63,38 +59,39 @@ export class HeuresComplementaireService {
         nom: true,
         prenom: true,
         heuresComplementaires: {
-          include: {
-            parcoursNiveau: { select: { niveau: { select: { nom: true } } } },
+          select: {
+            uniteEnseignement: true,
+            nbEncadrement: true,
+            tauxEncadrement: true,
+            nbSoutenance: true,
+            tauxSoutenance: true,
+            niveau: true,
           },
         },
       },
     });
 
-    const output = result.filter((res) => res.heuresComplementaires.length > 0);
+    const formattedData = result
+      .filter((ens) => ens.heuresComplementaires.length > 0)
+      .map((ens) => ({
+        codeEns: ens.codeEns,
+        nom: `${ens.nom} ${ens.prenom}`,
+        heuresComplementaires: ens.heuresComplementaires.map((hc) => ({
+          uniteEnseignement: hc.uniteEnseignement,
+          niveau: hc.niveau.nom,
+          nbEncadrement: hc.nbEncadrement,
+          tauxEncadrement: hc.tauxEncadrement,
+          totalEncadrement: hc.nbEncadrement * hc.tauxEncadrement,
+          nbSoutenance: hc.nbSoutenance,
+          tauxSoutenance: hc.tauxSoutenance,
+          totalSoutenance: hc.nbSoutenance * hc.tauxSoutenance,
+          total:
+            hc.nbEncadrement * hc.tauxEncadrement +
+            hc.nbSoutenance * hc.tauxSoutenance,
+        })),
+      }));
 
-    const formatted = output.map((out) => ({
-      codeEns: out.codeEns,
-      nom: out.nom + ' ' + out.prenom,
-      HeuresComplementaire: out.heuresComplementaires.map((hc) => ({
-        Objet: hc.uniteEnseignement,
-        Niveau: hc.parcoursNiveau.niveau.nom,
-        Enc: {
-          Nb: hc.nbEncadrement,
-          Taux: hc.tauxEncadrement,
-          Total: hc.nbEncadrement * hc.tauxEncadrement,
-        },
-        Sout: {
-          Nb: hc.nbSoutenance,
-          Taux: hc.tauxSoutenance,
-          Total: hc.nbSoutenance * hc.tauxSoutenance,
-        },
-        TotalHeuresEd:
-          hc.nbEncadrement * hc.tauxEncadrement +
-          hc.nbSoutenance * hc.tauxSoutenance,
-      })),
-    }));
-
-    return formatted;
+    return formattedData;
   }
 
   async update(id: number, data: Prisma.HeuresComplementaireUpdateInput) {

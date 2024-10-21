@@ -6,6 +6,7 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.suggest.completeFunctionCalls": true,
   "editor.formatOnSave": true,
+  "prettier.endOfLine": "lf",
   "editor.defaultFormatter": "svipas.prettier-plus",
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
@@ -26,8 +27,7 @@
   "prettier.tabWidth": 2,
   "prettier.useTabs": false,
   "editor.fontSize": 13,
-  "prettier.endOfLine": "lf",
   "[typescript]": {
-    "editor.defaultFormatter": "svipas.prettier-plus"
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   }
 }

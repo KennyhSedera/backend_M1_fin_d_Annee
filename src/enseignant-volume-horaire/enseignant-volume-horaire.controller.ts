@@ -30,11 +30,6 @@ export class EnseignantVolumeHoraireController {
     return this.service.findAllEC(data);
   }
 
-  @Post('EnsEcVh')
-  findAllEnsEcVh(@Body() data: parcoursNiveauDto) {
-    return this.service.findAllEnsEcVh(data);
-  }
-
   @Post('ens')
   findAllGrByEns(@Body() data: parcoursNiveauDto) {
     return this.service.getTeachingData(data);

@@ -9,7 +9,9 @@ describe('HeuresComplementaireService', () => {
       providers: [HeuresComplementaireService],
     }).compile();
 
-    service = module.get<HeuresComplementaireService>(HeuresComplementaireService);
+    service = module.get<HeuresComplementaireService>(
+      HeuresComplementaireService,
+    );
   });
 
   it('should be defined', () => {

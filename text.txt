@@ -1,37 +1,54 @@
 [
-  {
-    "codeEns": "P01",
-    "nomEns": "RAMAMONJISOA Andriantiana Bertin Olivier",
-    "decompteParcours": [
-      {
-        "parcours": "Génie logiciel et Base de données (GB)",
-        "encadrementTotal": 290,
-        "soutenanceTotal": 48
-      },
-      {
-        "parcours": "Administration Système et Réseaux (SR)",
-        "encadrementTotal": 40,
-        "soutenanceTotal": 8
-      }
-    ],
-    "totalEncadrement": 330,
-    "totalSoutenance": 56
-  },
-  {
-    "codeEns": "V01",
-    "nomEns": "RASOLOARIJAONA Madison",
-    "decompteParcours": [
-      {
-        "parcours": "Génie logiciel et Base de données (GB)",
-        "encadrementTotal": 0,
-        "soutenanceTotal": 0
-      },
-      {
-        "parcours": "Administration Système et Réseaux (SR)",
-        "encadrementTotal": 0,
-        "soutenanceTotal": 0
-      }],
-    "totalEncadrement": 0,
-    "totalSoutenance": 0
-  }
+    {
+        "codeEns": "P01",
+        "nom": "RAMAMONJISOA",
+        "prenom": "Andriantiana Bertin Olivier",
+        "heuresComplementaires": [
+            {
+                "uniteEnseignement": "Travaux de réalisation et soutenance de mini-mémoire",
+                "niveau": "L1"
+                "nbEncadrement": 2,
+                "tauxEncadrement": 20,
+                "totalEncadrement": nbEncadrement * tauxEncadrement,
+                "nbSoutenance": 2,
+                "tauxSoutenance": 4,
+                "totalSoutenance": nbSoutenance * tauxSoutenance,
+                "total":  nbEncadrement * tauxEncadrement + nbSoutenance * tauxSoutenance
+            },
+            {
+                "uniteEnseignement": "Stage en entreprise et soutenance de mini-mémoire",
+                "niveau": "L2"
+                "nbEncadrement": 10,
+                "tauxEncadrement": 25,
+                "totalEncadrement": nbEncadrement * tauxEncadrement,
+                "nbSoutenance": 10,
+                "tauxSoutenance": 4,
+                "totalSoutenance": nbSoutenance * tauxSoutenance,
+                "total":  nbEncadrement * tauxEncadrement + nbSoutenance * tauxSoutenance
+            },
+            {
+                "uniteEnseignement": "Travaux de réalisation et soutenance de mini-mémoire",
+                "niveau": "L1"
+                "nbEncadrement": 2,
+                "tauxEncadrement": 20,
+                "totalEncadrement": nbEncadrement * tauxEncadrement,
+                "nbSoutenance": 2,
+                "tauxSoutenance": 4,
+                "totalSoutenance": nbSoutenance * tauxSoutenance,
+                "total":  nbEncadrement * tauxEncadrement + nbSoutenance * tauxSoutenance
+            }
+        ]
+    },
+    {
+        "codeEns": "V01",
+        "nom": "RASOLOARIJAONA",
+        "prenom": "Madison",
+        "heuresComplementaires": []
+    },
+    {
+        "codeEns": "V02",
+        "nom": "Rasoa",
+        "prenom": "Nandrasana",
+        "heuresComplementaires": []
+    }
 ]

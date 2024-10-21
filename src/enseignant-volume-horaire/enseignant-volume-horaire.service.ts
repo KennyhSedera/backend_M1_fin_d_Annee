@@ -1,6 +1,7 @@
 import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { arrondissement } from '../increment';
 import { parcoursNiveauDto } from './parcoursNiveauDto';
 
 @Injectable()
@@ -39,9 +40,15 @@ export class EnseignantVolumeHoraireService {
         volumeHoraire: {
           include: {
             uniteEnseignement: true,
-            parcoursNiveau: true,
           },
         },
+      },
+    });
+
+    const parcoursNiveaux = await this.prisma.parcoursNiveau.findMany({
+      include: {
+        parcours: true,
+        niveau: true,
       },
     });
 
@@ -51,12 +58,16 @@ export class EnseignantVolumeHoraireService {
         const ed = record.volumeHoraire.ed || 0;
         const ep = record.volumeHoraire.ep || 0;
 
-        const nombreGroupesET =
-          record.volumeHoraire.parcoursNiveau.nombreGroupesET || 0;
-        const nombreGroupesED =
-          record.volumeHoraire.parcoursNiveau.nombreGroupesED || 0;
-        const nombreGroupesEP =
-          record.volumeHoraire.parcoursNiveau.nombreGroupesEP || 0;
+        const parcoursNiveau = parcoursNiveaux.filter(
+          (pn) =>
+            pn.parcours.id ===
+              record.volumeHoraire.uniteEnseignement.parcoursId &&
+            pn.niveau.id === record.volumeHoraire.uniteEnseignement.niveauId,
+        );
+
+        const nombreGroupesET = parcoursNiveau[0].nombreGroupesET || 0;
+        const nombreGroupesED = parcoursNiveau[0].nombreGroupesED || 0;
+        const nombreGroupesEP = parcoursNiveau[0].nombreGroupesEP || 0;
 
         acc.ET += et * nombreGroupesET;
         acc.ED += ed * nombreGroupesED;
@@ -69,11 +80,7 @@ export class EnseignantVolumeHoraireService {
 
     const recordsPra = await this.prisma.heuresComplementaire.findMany({
       where: { enseignantId: id },
-      include: {
-        parcoursNiveau: {
-          include: { parcours: true },
-        },
-      },
+      include: { parcours: true },
     });
 
     const totalPra = recordsPra.reduce(
@@ -103,13 +110,22 @@ export class EnseignantVolumeHoraireService {
 
     const salaire = VH * tauxSalarie;
 
-    return {
-      enseignant: recordsTheo[0]?.enseignant,
-      totalTheo,
-      totalPra,
-      salaire,
-      VH,
+    const datas = {
+      id: recordsTheo[0]?.enseignant.id,
+      codeEns: recordsTheo[0]?.enseignant.codeEns,
+      nom: recordsTheo[0]?.enseignant.nom + recordsTheo[0]?.enseignant.prenom,
+      grade: recordsTheo[0]?.enseignant.grade.title,
+      contact: recordsTheo[0]?.enseignant.contact,
+      CIN: recordsTheo[0]?.enseignant.CIN,
+      ET: totalTheo.ET,
+      ED: totalTheo.ED,
+      EP: totalTheo.EP,
+      Enc: totalPra.Enc,
+      Sout: totalPra.Sout,
+      salaire: arrondissement(salaire),
+      VH: arrondissement(VH),
     };
+    return datas;
   }
 
   async findAll(type: string) {
@@ -130,9 +146,15 @@ export class EnseignantVolumeHoraireService {
         volumeHoraire: {
           include: {
             uniteEnseignement: true,
-            parcoursNiveau: true,
           },
         },
+      },
+    });
+
+    const parcoursNiveaux = await this.prisma.parcoursNiveau.findMany({
+      include: {
+        parcours: true,
+        niveau: true,
       },
     });
 
@@ -148,8 +170,11 @@ export class EnseignantVolumeHoraireService {
           grade: enseignant.grade.title,
           contact: enseignant.contact,
           CIN: enseignant.CIN,
-          totalTheo: { ET: 0, ED: 0, EP: 0 },
-          totalPra: { Enc: 0, Sout: 0 },
+          ET: 0,
+          ED: 0,
+          EP: 0,
+          Enc: 0,
+          Sout: 0,
           Oblig: enseignant.Oblig,
           VH: 0,
           taux: enseignant.grade.taux,
@@ -163,25 +188,23 @@ export class EnseignantVolumeHoraireService {
       const ed = record.volumeHoraire.ed || 0;
       const ep = record.volumeHoraire.ep || 0;
 
-      const nombreGroupesET =
-        record.volumeHoraire.parcoursNiveau.nombreGroupesET || 0;
-      const nombreGroupesED =
-        record.volumeHoraire.parcoursNiveau.nombreGroupesED || 0;
-      const nombreGroupesEP =
-        record.volumeHoraire.parcoursNiveau.nombreGroupesEP || 0;
+      const parcoursNiveau = parcoursNiveaux.filter(
+        (pn) =>
+          pn.parcours.id ===
+            record.volumeHoraire.uniteEnseignement.parcoursId &&
+          pn.niveau.id === record.volumeHoraire.uniteEnseignement.niveauId,
+      );
 
-      group.totalTheo.ET += et * nombreGroupesET;
-      group.totalTheo.ED += ed * nombreGroupesED;
-      group.totalTheo.EP += ep * nombreGroupesEP;
+      const nombreGroupesET = parcoursNiveau[0].nombreGroupesET || 0;
+      const nombreGroupesED = parcoursNiveau[0].nombreGroupesED || 0;
+      const nombreGroupesEP = parcoursNiveau[0].nombreGroupesEP || 0;
+
+      group.ET += et * nombreGroupesET;
+      group.ED += ed * nombreGroupesED;
+      group.EP += ep * nombreGroupesEP;
     }
 
-    const recordsPra = await this.prisma.heuresComplementaire.findMany({
-      include: {
-        parcoursNiveau: {
-          include: { parcours: true },
-        },
-      },
-    });
+    const recordsPra = await this.prisma.heuresComplementaire.findMany({});
 
     for (const record of recordsPra) {
       const enseignantId = record.enseignantId;
@@ -195,24 +218,25 @@ export class EnseignantVolumeHoraireService {
         const tauxEnc = record.tauxEncadrement || 0;
         const tauxSout = record.tauxSoutenance || 0;
 
-        group.totalPra.Enc += nbEnc * tauxEnc;
-        group.totalPra.Sout += nbSout * tauxSout;
+        group.Enc += nbEnc * tauxEnc;
+        group.Sout += nbSout * tauxSout;
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, group] of enseignantMap) {
       const tauxSalarie = group.taux;
 
       const VH =
-        (group.totalTheo.ET * 5) / 3 +
-        group.totalTheo.ED +
-        (group.totalTheo.EP * 2) / 3 +
-        group.totalPra.Enc +
-        group.totalPra.Sout -
+        (group.ET * 5) / 3 +
+        group.ED +
+        (group.EP * 2) / 3 +
+        group.Enc +
+        group.Sout -
         group.Oblig;
 
-      group.montant = VH * tauxSalarie;
-      group.VH = VH;
+      group.montant = arrondissement(VH * tauxSalarie);
+      group.VH = arrondissement(VH);
     }
 
     const result = Array.from(enseignantMap.values());
@@ -224,12 +248,6 @@ export class EnseignantVolumeHoraireService {
     const parcoursNiveaux = await this.prisma.parcoursNiveau.findMany({
       where: {
         anneeUniversitaire: data.anneeUniversitaire,
-        parcours: {
-          nom: data.parcoursNom,
-          mention: {
-            nom: data.mentionNom,
-          },
-        },
       },
       select: {
         id: true,
@@ -238,24 +256,27 @@ export class EnseignantVolumeHoraireService {
         nombreGroupesED: true,
         nombreGroupesET: true,
         nombreGroupesEP: true,
+        parcoursId: true,
+        niveauId: true,
         niveau: true,
         parcours: {
           include: {
             mention: true,
           },
         },
-        volumesHoraire: {
+      },
+    });
+
+    const volumeHoraire = await this.prisma.volumeHoraire.findMany({
+      include: {
+        uniteEnseignement: true,
+        enseignantVolumeHoraire: {
           include: {
-            uniteEnseignement: true,
-            enseignantVolumeHoraire: {
-              include: {
-                enseignant: {
-                  select: {
-                    codeEns: true,
-                    nom: true,
-                    prenom: true,
-                  },
-                },
+            enseignant: {
+              select: {
+                codeEns: true,
+                nom: true,
+                prenom: true,
               },
             },
           },
@@ -264,7 +285,12 @@ export class EnseignantVolumeHoraireService {
     });
 
     const result = parcoursNiveaux.map((parcoursNiveau) => {
-      const volumesHoraires = parcoursNiveau.volumesHoraire.map(
+      const volumeHoraireFilter = volumeHoraire.filter(
+        (vh) =>
+          vh.uniteEnseignement.niveauId === parcoursNiveau.niveauId &&
+          vh.uniteEnseignement.parcoursId === parcoursNiveau.parcoursId,
+      );
+      const volumesHoraires = volumeHoraireFilter.map(
         (volume, i) =>
           volume.enseignantVolumeHoraire.length > 0 && {
             idVH: i + 1,
@@ -310,60 +336,56 @@ export class EnseignantVolumeHoraireService {
   }
 
   async getTeachingData(data: parcoursNiveauDto) {
-    const result = await this.prisma.enseignant.findMany({
+    const result = await this.prisma.enseignantVolumeHoraire.findMany({
       where: {
-        enseignantVolumeHoraire: {
-          some: {
-            volumeHoraire: {
-              parcoursNiveau: {
-                anneeUniversitaire: data.anneeUniversitaire,
-                parcours: {
-                  nom: data.parcoursNom,
-                  mention: {
-                    nom: data.mentionNom,
-                  },
-                },
-              },
+        volumeHoraire: {
+          uniteEnseignement: {
+            parcours: {
+              nom: data.parcours,
             },
           },
         },
       },
       select: {
-        codeEns: true,
-        nom: true,
-        prenom: true,
-        enseignantVolumeHoraire: {
+        id: true,
+        enseignant: {
           select: {
-            volumeHoraire: {
+            codeEns: true,
+            nom: true,
+            prenom: true,
+          },
+        },
+        volumeHoraire: {
+          select: {
+            elementConstitutif: true,
+            semestre: true,
+            ed: true,
+            et: true,
+            ep: true,
+            uniteEnseignement: {
               select: {
-                elementConstitutif: true,
-                semestre: true,
-                et: true,
-                ed: true,
-                ep: true,
-                uniteEnseignement: {
-                  select: {
-                    name: true,
-                  },
-                },
-                parcoursNiveau: {
-                  select: {
-                    anneeUniversitaire: true,
-                    nombreGroupesET: true,
-                    nombreGroupesED: true,
-                    nombreGroupesEP: true,
-                    parcours: {
-                      select: {
-                        nom: true,
-                        mention: {
-                          select: {
-                            nom: true,
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
+                niveauId: true,
+                parcoursId: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { enseignant: { codeEns: 'asc' } },
+    });
+
+    const parcoursNiveau = await this.prisma.parcoursNiveau.findMany({
+      select: {
+        anneeUniversitaire: true,
+        nombreGroupesET: true,
+        nombreGroupesED: true,
+        nombreGroupesEP: true,
+        parcours: {
+          select: {
+            nom: true,
+            mention: {
+              select: {
+                nom: true,
               },
             },
           },
@@ -371,52 +393,42 @@ export class EnseignantVolumeHoraireService {
       },
     });
 
-    const formattedResult = result.reduce((acc, enseignant) => {
-      enseignant.enseignantVolumeHoraire.forEach((volHoraire) => {
-        const parcoursName =
-          volHoraire.volumeHoraire.parcoursNiveau?.parcours.nom;
+    const formattedResult = result.reduce((acc, enseignantData) => {
+      let enseignantEntry = acc.find(
+        (entry) =>
+          entry.enseignant.codeEns === enseignantData.enseignant.codeEns,
+      );
 
-        if (parcoursName === data.parcoursNom) {
-          let enseignantEntry = acc.find(
-            (entry) => entry.CE === enseignant.codeEns,
-          );
+      if (!enseignantEntry) {
+        enseignantEntry = {
+          enseignant: enseignantData.enseignant,
+          volumeHoraire: [],
+        };
+        acc.push(enseignantEntry);
+      }
 
-          if (!enseignantEntry) {
-            enseignantEntry = {
-              CE: enseignant.codeEns,
-              enseignantResponsable: `${enseignant.nom} ${enseignant.prenom}`,
-              elementConstitutif: [],
-            };
-            acc.push(enseignantEntry);
-          }
-
-          enseignantEntry.elementConstitutif.push({
-            EC: volHoraire.volumeHoraire.elementConstitutif,
-            Sem: volHoraire.volumeHoraire.semestre,
-            VH:
-              (volHoraire.volumeHoraire.et || 0) +
-              (volHoraire.volumeHoraire.ed || 0) +
-              (volHoraire.volumeHoraire.ep || 0),
-            ET_Base: volHoraire.volumeHoraire.et || 0,
-            ET_GR:
-              volHoraire.volumeHoraire.parcoursNiveau?.nombreGroupesET || 1,
-            ET_TT:
-              (volHoraire.volumeHoraire.et || 0) *
-              (volHoraire.volumeHoraire.parcoursNiveau?.nombreGroupesET || 1),
-            ED_Base: volHoraire.volumeHoraire.ed || 0,
-            ED_GR:
-              volHoraire.volumeHoraire.parcoursNiveau?.nombreGroupesED || 1,
-            ED_TT:
-              (volHoraire.volumeHoraire.ed || 0) *
-              (volHoraire.volumeHoraire.parcoursNiveau?.nombreGroupesED || 1),
-            EP_Base: volHoraire.volumeHoraire.ep || 0,
-            EP_GR:
-              volHoraire.volumeHoraire.parcoursNiveau?.nombreGroupesEP || 1,
-            EP_Total:
-              (volHoraire.volumeHoraire.ep || 0) *
-              (volHoraire.volumeHoraire.parcoursNiveau?.nombreGroupesEP || 1),
-          });
-        }
+      enseignantEntry.volumeHoraire.push({
+        elementConstitutif: enseignantData.volumeHoraire.elementConstitutif,
+        semestre: enseignantData.volumeHoraire.semestre,
+        VH:
+          (enseignantData.volumeHoraire.et || 0) +
+          (enseignantData.volumeHoraire.ed || 0) +
+          (enseignantData.volumeHoraire.ep || 0),
+        ET_Base: enseignantData.volumeHoraire.et || 0,
+        ET_GR: parcoursNiveau[0]?.nombreGroupesET || 1,
+        ET_TT:
+          (enseignantData.volumeHoraire.et || 0) *
+          (parcoursNiveau[0]?.nombreGroupesET || 1),
+        ED_Base: enseignantData.volumeHoraire.ed || 0,
+        ED_GR: parcoursNiveau[0]?.nombreGroupesED || 1,
+        ED_TT:
+          (enseignantData.volumeHoraire.ed || 0) *
+          (parcoursNiveau[0]?.nombreGroupesED || 1),
+        EP_Base: enseignantData.volumeHoraire.ep || 0,
+        EP_GR: parcoursNiveau[0]?.nombreGroupesEP || 1,
+        EP_Total:
+          (enseignantData.volumeHoraire.ep || 0) *
+          (parcoursNiveau[0]?.nombreGroupesEP || 1),
       });
 
       return acc;
@@ -424,8 +436,8 @@ export class EnseignantVolumeHoraireService {
 
     const output = {
       anneeUniversitaire: data.anneeUniversitaire,
-      mention: data.mentionNom,
-      parcours: data.parcoursNom,
+      mention: data.mention,
+      parcours: data.parcours,
       enseignants: formattedResult,
     };
 
@@ -436,11 +448,11 @@ export class EnseignantVolumeHoraireService {
     const result = await this.prisma.enseignantVolumeHoraire.findMany({
       where: {
         volumeHoraire: {
-          parcoursNiveau: {
+          uniteEnseignement: {
             parcours: {
-              nom: data.parcoursNom,
+              nom: data.parcours,
               mention: {
-                nom: data.mentionNom,
+                nom: data.mention,
               },
             },
           },

@@ -15,7 +15,16 @@ export class VolumeHoraireService {
   }
 
   async findAll() {
-    const result = await this.prisma.volumeHoraire.findMany();
+    const result = await this.prisma.volumeHoraire.findMany({
+      include: {
+        uniteEnseignement: {
+          include: {
+            niveau: true,
+            parcours: true,
+          },
+        },
+      },
+    });
     return result;
   }
 
@@ -33,19 +42,25 @@ export class VolumeHoraireService {
             mention: true,
           },
         },
-        volumesHoraire: {
-          include: {
-            uniteEnseignement: true,
-            enseignantVolumeHoraire: {
-              include: { enseignant: true },
-            },
-          },
+      },
+    });
+
+    const volumeHoraire = await this.prisma.volumeHoraire.findMany({
+      include: {
+        uniteEnseignement: true,
+        enseignantVolumeHoraire: {
+          include: { enseignant: true },
         },
       },
     });
 
     const result = parcoursNiveaux.map((parcoursNiveau) => {
-      const volumesHoraires = parcoursNiveau.volumesHoraire.map((volume) => ({
+      const volumeHoraireFilter = volumeHoraire.filter(
+        (vh) =>
+          vh.uniteEnseignement.niveauId === parcoursNiveau.niveauId &&
+          vh.uniteEnseignement.parcoursId === parcoursNiveau.parcoursId,
+      );
+      const volumesHoraires = volumeHoraireFilter.map((volume) => ({
         id: volume.id,
         codeEns: volume.enseignantVolumeHoraire[0]?.enseignant.codeEns,
         nomEns: volume.enseignantVolumeHoraire[0]?.enseignant.nom,
@@ -88,16 +103,26 @@ export class VolumeHoraireService {
             mention: true,
           },
         },
-        volumesHoraire: {
-          include: {
-            uniteEnseignement: true,
-          },
+      },
+    });
+
+    const volumeHoraire = await this.prisma.volumeHoraire.findMany({
+      include: {
+        uniteEnseignement: true,
+        enseignantVolumeHoraire: {
+          include: { enseignant: true },
         },
       },
     });
 
     const result = parcoursNiveaux.map((parcoursNiveau) => {
-      const volumesHoraires = parcoursNiveau.volumesHoraire.map((volume) => ({
+      const volumeHoraireFilter = volumeHoraire.filter(
+        (vh) =>
+          vh.uniteEnseignement.niveauId === parcoursNiveau.niveauId &&
+          vh.uniteEnseignement.parcoursId === parcoursNiveau.parcoursId,
+      );
+
+      const volumesHoraires = volumeHoraireFilter.map((volume) => ({
         id: volume.id,
         elementConstitutif: volume.elementConstitutif,
         semestre: volume.semestre,
@@ -109,7 +134,7 @@ export class VolumeHoraireService {
         poidsEC: volume.poidsEC || 0,
       }));
 
-      const uniqueUniteEnseignement = parcoursNiveau.volumesHoraire.reduce(
+      const uniqueUniteEnseignement = volumeHoraireFilter.reduce(
         (acc, volume) => {
           const existingUE = acc.find(
             (ue) => ue.id == volume.uniteEnseignement.id,

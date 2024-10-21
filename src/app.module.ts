@@ -14,9 +14,15 @@ import { VolumeHoraireModule } from './volume-horaire/volume-horaire.module';
 import { GradeModule } from './grade/grade.module';
 import { EnseignantVolumeHoraireModule } from './enseignant-volume-horaire/enseignant-volume-horaire.module';
 import { HeuresComplementaireModule } from './heures-complementaire/heures-complementaire.module';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     EnseignantModule,
     PrismaModule,
     UserModule,
@@ -34,4 +40,4 @@ import { HeuresComplementaireModule } from './heures-complementaire/heures-compl
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

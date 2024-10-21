@@ -9,7 +9,9 @@ describe('EnseignantVolumeHoraireController', () => {
       controllers: [EnseignantVolumeHoraireController],
     }).compile();
 
-    controller = module.get<EnseignantVolumeHoraireController>(EnseignantVolumeHoraireController);
+    controller = module.get<EnseignantVolumeHoraireController>(
+      EnseignantVolumeHoraireController,
+    );
   });
 
   it('should be defined', () => {

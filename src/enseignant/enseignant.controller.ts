@@ -6,17 +6,53 @@ import {
   Param,
   Post,
   Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EnseignantService } from './enseignant.service';
 import { Prisma } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { extname } from 'path';
+import { diskStorage } from 'multer';
+import { Express } from 'express';
 
 @Controller('enseignant')
 export class EnseignantController {
   constructor(private readonly service: EnseignantService) {}
 
   @Post()
-  create(@Body() data: Prisma.EnseignantUncheckedCreateInput) {
-    return this.service.create(data);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + '-' + file.originalname.replace(/\.[^/.]+$/, '');
+          const ext = extname(file.originalname);
+          callback(null, `${uniqueSuffix}${ext}`);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (req, file, callback) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+          return callback(new Error('Only image files are allowed!'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  create(
+    @Body() data: Prisma.EnseignantUncheckedCreateInput,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (file) {
+      data.ensPhoto = file.filename;
+      console.log({ data });
+    } else {
+      data.ensPhoto = '';
+      console.log({ data });
+    }
+    // return this.service.create(data);
   }
 
   @Get()
