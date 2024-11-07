@@ -88,4 +88,15 @@ export class UserService {
       return true;
     }
   }
+
+  async updatePhoto(data: string, id: number) {
+    await this.prisma.user.update({
+      where: { id: id },
+      data: { userPhoto: data },
+    });
+    return {
+      success: true,
+      message: 'Photo utilisateur modifié avec succès',
+    };
+  }
 }

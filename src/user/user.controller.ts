@@ -6,9 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UserService } from './user.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('user')
 export class UserController {
@@ -64,5 +69,41 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @Patch('photo/:id')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/user',
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + '-' + file.originalname.replace(/\.[^/.]+$/, '');
+          const ext = extname(file.originalname);
+          callback(null, `${uniqueSuffix}${ext}`);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (req, file, callback) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+          return callback(new Error('Only image files are allowed!'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async updatePhoto(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') id: string,
+  ) {
+    let userPhoto = '';
+    if (file) {
+      userPhoto = 'user/' + file.filename;
+      console.log(userPhoto);
+    } else {
+      userPhoto = '';
+      console.log(userPhoto);
+    }
+    return this.userService.updatePhoto(userPhoto, +id);
   }
 }

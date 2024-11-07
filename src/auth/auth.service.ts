@@ -23,6 +23,7 @@ export class AuthService {
     if (!passwordTrue) {
       throw new UnauthorizedException('Mot de passe incorect');
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return result;
     }
@@ -49,7 +50,7 @@ export class AuthService {
           {
             success: false,
             errorName: error.name,
-            message: 'Votre session a expiré.',
+            message: 'Votre session a expiré. Veuillez vous reconnecter.',
             error: 'Unauthorized',
             statusCode: 401,
           },

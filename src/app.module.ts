@@ -13,9 +13,9 @@ import { UniteEnseignementModule } from './unite-enseignement/unite-enseignement
 import { VolumeHoraireModule } from './volume-horaire/volume-horaire.module';
 import { GradeModule } from './grade/grade.module';
 import { EnseignantVolumeHoraireModule } from './enseignant-volume-horaire/enseignant-volume-horaire.module';
-import { HeuresComplementaireModule } from './heures-complementaire/heures-complementaire.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { EncadrementSoutenanceModule } from './encadrement-soutenance/encadrement-soutenance.module';
 
 @Module({
   imports: [
@@ -35,7 +35,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     VolumeHoraireModule,
     GradeModule,
     EnseignantVolumeHoraireModule,
-    HeuresComplementaireModule,
+    EncadrementSoutenanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

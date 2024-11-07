@@ -24,7 +24,7 @@ export class EnseignantService {
     if (res.length > 0) {
       data.codeEns = NewCodeEns(res[res.length - 1].codeEns);
     } else {
-      data.codeEns = data.type[0] + '01';
+      data.codeEns = data.type[0].toUpperCase() + '01';
     }
     await this.prisma.enseignant.create({ data });
     return {
@@ -109,7 +109,7 @@ export class EnseignantService {
         codeEns: true,
         nom: true,
         prenom: true,
-        heuresComplementaires: {
+        encadrementSoutenances: {
           include: {
             niveau: true,
             parcours: {

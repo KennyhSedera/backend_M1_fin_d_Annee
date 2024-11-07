@@ -69,7 +69,7 @@ export class VolumeHoraireService {
         et: volume.et || 0,
         ed: volume.ed || 0,
         ep: volume.ep || 0,
-        creditUE: volume.creditUE || 0,
+        creditUE: volume.uniteEnseignement.creditUE || 0,
         creditEC: volume.creditEC || 0,
         poidsEC: volume.poidsEC || 0,
       }));
@@ -129,7 +129,7 @@ export class VolumeHoraireService {
         et: volume.et || 0,
         ed: volume.ed || 0,
         ep: volume.ep || 0,
-        creditUE: volume.creditUE || 0,
+        creditUE: volume.uniteEnseignement.creditUE || 0,
         creditEC: volume.creditEC || 0,
         poidsEC: volume.poidsEC || 0,
       }));
@@ -142,7 +142,7 @@ export class VolumeHoraireService {
           if (!existingUE) {
             acc.push({
               id: volume.uniteEnseignement.id,
-              name: volume.uniteEnseignement.name,
+              name: volume.uniteEnseignement.nom,
               volumesHoraires: volumesHoraires,
             });
           }
@@ -166,7 +166,7 @@ export class VolumeHoraireService {
     return result;
   }
 
-  async update(id: number, data: Prisma.VolumeHoraireUpdateInput) {
+  async update(id: number, data: Prisma.VolumeHoraireUncheckedUpdateInput) {
     await this.prisma.volumeHoraire.update({ where: { id }, data });
     return {
       success: true,

@@ -9,14 +9,14 @@ async function bootstrap() {
 
   app.useStaticAssets(join(__dirname, '..', 'uploads'));
 
-  // const corsOptions: CorsOptions = {
-  //   origin: '*',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   credentials: true,
-  // };
+  const corsOptions: CorsOptions = {
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  };
 
-  app.enableCors();
+  app.enableCors(corsOptions);
 
-  await app.listen(4000);
+  await app.listen(5000);
 }
 bootstrap();

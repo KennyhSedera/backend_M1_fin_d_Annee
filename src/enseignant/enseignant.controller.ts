@@ -24,7 +24,7 @@ export class EnseignantController {
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './uploads',
+        destination: './uploads/enseignant',
         filename: (req, file, callback) => {
           const uniqueSuffix =
             Date.now() + '-' + file.originalname.replace(/\.[^/.]+$/, '');
@@ -45,17 +45,16 @@ export class EnseignantController {
     @Body() data: Prisma.EnseignantUncheckedCreateInput,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    data.gradeId = Number(data.gradeId);
     if (file) {
-      data.ensPhoto = file.filename;
-      console.log({ data });
+      data.ensPhoto = 'enseignant/' + file.filename;
     } else {
       data.ensPhoto = '';
-      console.log({ data });
     }
-    // return this.service.create(data);
+    return this.service.create(data);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.service.findAll();
   }

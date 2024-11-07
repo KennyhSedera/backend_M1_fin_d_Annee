@@ -35,13 +35,18 @@ export class EnseignantVolumeHoraireController {
     return this.service.getTeachingData(data);
   }
 
+  @Post('ens-ec')
+  findAllEnsEcVh(@Body() data: parcoursNiveauDto) {
+    return this.service.findAllEnsEcVh(data);
+  }
+
   @Post()
   create(@Body() data: Prisma.EnseignantVolumeHoraireUncheckedCreateInput) {
     return this.service.create(data);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() data) {
+  update(@Param('id') id: string, @Body() data: any) {
     return this.service.update(+id, data);
   }
 

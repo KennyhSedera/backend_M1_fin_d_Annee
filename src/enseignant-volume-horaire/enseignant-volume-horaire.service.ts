@@ -78,7 +78,7 @@ export class EnseignantVolumeHoraireService {
       { ET: 0, ED: 0, EP: 0 },
     );
 
-    const recordsPra = await this.prisma.heuresComplementaire.findMany({
+    const recordsPra = await this.prisma.encadrementSoutenance.findMany({
       where: { enseignantId: id },
       include: { parcours: true },
     });
@@ -165,8 +165,7 @@ export class EnseignantVolumeHoraireService {
       if (!enseignantMap.has(enseignantId)) {
         enseignantMap.set(enseignantId, {
           code: enseignant.codeEns,
-          nom: enseignant.nom,
-          prenom: enseignant.prenom,
+          nom: enseignant.nom + enseignant.prenom,
           grade: enseignant.grade.title,
           contact: enseignant.contact,
           CIN: enseignant.CIN,
@@ -204,7 +203,7 @@ export class EnseignantVolumeHoraireService {
       group.EP += ep * nombreGroupesEP;
     }
 
-    const recordsPra = await this.prisma.heuresComplementaire.findMany({});
+    const recordsPra = await this.prisma.encadrementSoutenance.findMany({});
 
     for (const record of recordsPra) {
       const enseignantId = record.enseignantId;
@@ -248,6 +247,10 @@ export class EnseignantVolumeHoraireService {
     const parcoursNiveaux = await this.prisma.parcoursNiveau.findMany({
       where: {
         anneeUniversitaire: data.anneeUniversitaire,
+        parcours: {
+          nom: data.parcours,
+          mention: { nom: data.mention },
+        },
       },
       select: {
         id: true,
@@ -342,6 +345,7 @@ export class EnseignantVolumeHoraireService {
           uniteEnseignement: {
             parcours: {
               nom: data.parcours,
+              mention: { nom: data.mention },
             },
           },
         },
@@ -457,6 +461,10 @@ export class EnseignantVolumeHoraireService {
             },
           },
         },
+      },
+      include: {
+        enseignant: true,
+        volumeHoraire: true,
       },
     });
     return result;

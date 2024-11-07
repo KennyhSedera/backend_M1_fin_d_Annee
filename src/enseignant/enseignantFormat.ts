@@ -1,11 +1,11 @@
-export const decompteTheo = (enseignants, parcourNiveau) => {
+export const decompteTheo = (enseignants: any, parcourNiveau: any) => {
   const data = { enseignants, parcourNiveau };
 
   const results = {};
 
-  data.parcourNiveau.forEach((parcourNiveau) => {
-    data.enseignants.forEach((enseignant) => {
-      enseignant.enseignantVolumeHoraire.forEach((volume) => {
+  data.parcourNiveau.forEach((parcourNiveau: any) => {
+    data.enseignants.forEach((enseignant: any) => {
+      enseignant.enseignantVolumeHoraire.forEach((volume: any) => {
         const unite = volume.volumeHoraire.uniteEnseignement;
 
         if (
@@ -71,17 +71,18 @@ export const decompteTheo = (enseignants, parcourNiveau) => {
 
   return resultat;
 };
-export const decomptePra = (enseignants) => {
+
+export const decomptePra = (enseignants: any) => {
   const enseignantsAvecHeures = enseignants.filter(
-    (enseignant) => enseignant.heuresComplementaires.length > 0,
+    (enseignant: any) => enseignant.encadrementSoutenances.length > 0,
   );
 
-  const results = enseignantsAvecHeures.map((enseignant) => {
+  const results = enseignantsAvecHeures.map((enseignant: any) => {
     const totals = {};
     let totalEncadrementGlobal = 0;
     let totalSoutenanceGlobal = 0;
 
-    enseignant.heuresComplementaires.forEach((heure) => {
+    enseignant.encadrementSoutenances.forEach((heure: any) => {
       const parcoursKey = heure.parcours.nom;
 
       if (!totals[parcoursKey]) {
@@ -101,7 +102,7 @@ export const decomptePra = (enseignants) => {
       totalSoutenanceGlobal += soutenance;
     });
 
-    const heuresComplementaires = Object.keys(totals).map((parcours) => ({
+    const encadrementSoutenance = Object.keys(totals).map((parcours) => ({
       parcours,
       value: [
         {
@@ -114,7 +115,7 @@ export const decomptePra = (enseignants) => {
     return {
       codeEns: enseignant.codeEns,
       nom: enseignant.nom + enseignant.prenom,
-      heuresComplementaires,
+      encadrementSoutenance,
       Total: {
         Encadrement: totalEncadrementGlobal,
         Soutenance: totalSoutenanceGlobal,
