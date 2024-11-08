@@ -15,7 +15,22 @@ export class UniteEnseignementService {
   }
 
   async findAll() {
-    return this.prisma.uniteEnseignement.findMany();
+    const data = await this.prisma.uniteEnseignement.findMany({
+      include: { parcours: true, niveau: true },
+    });
+
+    const ue = [];
+    data.forEach((el) => {
+      ue.push({
+        id: el.id,
+        nom: el.nom,
+        creditUE: el.creditUE,
+        niveau: el.niveau?.nom,
+        parcours: el.parcours?.nom,
+      });
+    });
+
+    return ue;
   }
 
   async findAllByParcours(parcours: string) {

@@ -10,7 +10,7 @@ import {
 import { EncadrementSoutenanceService } from './encadrement-soutenance.service';
 import { Prisma } from '@prisma/client';
 
-@Controller('heures-complementaire')
+@Controller('encadrement-soutenance')
 export class EncadrementSoutenanceController {
   constructor(private readonly service: EncadrementSoutenanceService) {}
 
@@ -19,7 +19,7 @@ export class EncadrementSoutenanceController {
     return this.service.create(data);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.service.findAllGroupByEns();
   }

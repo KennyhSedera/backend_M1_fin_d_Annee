@@ -25,7 +25,26 @@ export class VolumeHoraireService {
         },
       },
     });
-    return result;
+
+    const vh = [];
+    result.forEach((el) => {
+      vh.push({
+        id: el.id,
+        elementConstitutif: el.elementConstitutif,
+        semestre: el.semestre,
+        et: el.et,
+        ed: el.ed,
+        ep: el.ep,
+        creditEC: el.creditEC,
+        poidsEC: el.poidsEC,
+        creditUE: el.uniteEnseignement?.creditUE,
+        uniteEnseignement: el.uniteEnseignement?.nom,
+        parcours: el.uniteEnseignement?.parcours?.nom,
+        niveau: el.uniteEnseignement?.niveau?.nom,
+      });
+    });
+
+    return vh;
   }
 
   async findAllByParcoursEns(parcours: string) {
