@@ -143,6 +143,7 @@ export class VolumeHoraireService {
 
       const volumesHoraires = volumeHoraireFilter.map((volume) => ({
         id: volume.id,
+        idUe: volume.uniteEnseignement.id,
         elementConstitutif: volume.elementConstitutif,
         semestre: volume.semestre,
         et: volume.et || 0,
@@ -162,7 +163,9 @@ export class VolumeHoraireService {
             acc.push({
               id: volume.uniteEnseignement.id,
               name: volume.uniteEnseignement.nom,
-              volumesHoraires: volumesHoraires,
+              volumesHoraires: volumesHoraires.filter(
+                (el) => el.idUe === volume.uniteEnseignement.id,
+              ),
             });
           }
           return acc;

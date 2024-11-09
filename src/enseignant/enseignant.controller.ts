@@ -32,7 +32,7 @@ export class EnseignantController {
           callback(null, `${uniqueSuffix}${ext}`);
         },
       }),
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 7 * 1024 * 1024 },
       fileFilter: (req, file, callback) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
           return callback(new Error('Only image files are allowed!'), false);
@@ -46,6 +46,7 @@ export class EnseignantController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     data.gradeId = Number(data.gradeId);
+    data.Oblig = data.Oblig ? Number(data.Oblig) : null;
     if (file) {
       data.ensPhoto = 'enseignant/' + file.filename;
     } else {
