@@ -25,7 +25,7 @@ export const decompteTheo = (enseignants: any, parcourNiveau: any) => {
           if (!results[key]) {
             results[key] = {
               codeEns: enseignant.codeEns,
-              nom: enseignant.nom + enseignant.prenom,
+              nom: enseignant.nom + ' ' + enseignant.prenom,
               value: [],
               total: { ET: 0, ED: 0, EP: 0 },
             };
@@ -114,7 +114,7 @@ export const decomptePra = (enseignants: any) => {
 
     return {
       codeEns: enseignant.codeEns,
-      nom: enseignant.nom + enseignant.prenom,
+      nom: enseignant.nom + ' ' + enseignant.prenom,
       encadrementSoutenance,
       Total: {
         Encadrement: totalEncadrementGlobal,

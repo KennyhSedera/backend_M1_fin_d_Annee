@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { parcoursNiveauDto } from '../enseignant-volume-horaire/parcoursNiveauDto';
 
 @Injectable()
 export class EncadrementSoutenanceService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: Prisma.EncadrementSoutenanceCreateInput) {
+  async create(data: Prisma.EncadrementSoutenanceUncheckedCreateInput) {
     await this.prisma.encadrementSoutenance.create({ data });
     return {
       success: true,
@@ -14,8 +15,12 @@ export class EncadrementSoutenanceService {
     };
   }
 
-  async findAllEnsEncSout() {
+  async findAllEnsEncSout(value: parcoursNiveauDto) {
     const result = await this.prisma.encadrementSoutenance.findMany({
+      where: {
+        anneeUniversitaire: value.anneeUniversitaire,
+        parcours: { nom: value.parcours },
+      },
       include: {
         enseignant: {
           select: {
@@ -51,21 +56,23 @@ export class EncadrementSoutenanceService {
     return data;
   }
 
-  async findAllGroupByEns() {
+  async findAllGroupByEns(value: parcoursNiveauDto) {
     const result = await this.prisma.enseignant.findMany({
-      where: {},
       select: {
         codeEns: true,
         nom: true,
         prenom: true,
         encadrementSoutenances: {
           select: {
+            id: true,
             Objet: true,
             nbEncadrement: true,
             tauxEncadrement: true,
             nbSoutenance: true,
             tauxSoutenance: true,
             niveau: true,
+            anneeUniversitaire: true,
+            parcours: true,
           },
         },
       },
@@ -76,19 +83,26 @@ export class EncadrementSoutenanceService {
       .map((ens) => ({
         codeEns: ens.codeEns,
         nom: `${ens.nom} ${ens.prenom}`,
-        EncadrementSoutenance: ens.encadrementSoutenances.map((hc) => ({
-          uniteEnseignement: hc.Objet,
-          niveau: hc.niveau.nom,
-          nbEncadrement: hc.nbEncadrement,
-          tauxEncadrement: hc.tauxEncadrement,
-          totalEncadrement: hc.nbEncadrement * hc.tauxEncadrement,
-          nbSoutenance: hc.nbSoutenance,
-          tauxSoutenance: hc.tauxSoutenance,
-          totalSoutenance: hc.nbSoutenance * hc.tauxSoutenance,
-          total:
-            hc.nbEncadrement * hc.tauxEncadrement +
-            hc.nbSoutenance * hc.tauxSoutenance,
-        })),
+        EncSout: ens.encadrementSoutenances
+          .filter(
+            (el) =>
+              el.anneeUniversitaire === value.anneeUniversitaire &&
+              el.parcours.nom === value.parcours,
+          )
+          .map((hc) => ({
+            id: hc.id,
+            uniteEnseignement: hc.Objet,
+            niveau: hc.niveau.nom,
+            nbEncadrement: hc.nbEncadrement,
+            tauxEncadrement: hc.tauxEncadrement,
+            totalEncadrement: hc.nbEncadrement * hc.tauxEncadrement,
+            nbSoutenance: hc.nbSoutenance,
+            tauxSoutenance: hc.tauxSoutenance,
+            totalSoutenance: hc.nbSoutenance * hc.tauxSoutenance,
+            total:
+              hc.nbEncadrement * hc.tauxEncadrement +
+              hc.nbSoutenance * hc.tauxSoutenance,
+          })),
       }));
 
     return formattedData;

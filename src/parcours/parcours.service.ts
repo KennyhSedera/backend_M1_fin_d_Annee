@@ -15,7 +15,7 @@ export class ParcoursService {
   }
 
   async findAll() {
-    return this.prisma.parcours.findMany();
+    return this.prisma.parcours.findMany({ include: { mention: true } });
   }
 
   async update(id: number, data: Prisma.ParcoursUpdateInput) {

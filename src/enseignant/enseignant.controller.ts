@@ -60,6 +60,11 @@ export class EnseignantController {
     return this.service.findAll();
   }
 
+  @Get('type')
+  findAllType() {
+    return this.service.findAllType();
+  }
+
   @Get('/decompteTheo')
   findAllDecomptTheo() {
     return this.service.findAllDecomptTheo();

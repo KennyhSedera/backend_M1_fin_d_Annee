@@ -15,7 +15,7 @@ export class ParcoursNiveauService {
   }
 
   async findAll() {
-    return this.prisma.parcoursNiveau.findMany({
+    return await this.prisma.parcoursNiveau.findMany({
       include: {
         niveau: true,
         parcours: {
@@ -23,6 +23,21 @@ export class ParcoursNiveauService {
         },
       },
     });
+  }
+
+  async findAnnee() {
+    const data = await this.prisma.parcoursNiveau.groupBy({
+      by: ['anneeUniversitaire'],
+      orderBy: { anneeUniversitaire: 'desc' },
+    });
+    const result = [];
+    data.forEach((el, i) =>
+      result.push({
+        id: i + 1,
+        date: el.anneeUniversitaire,
+      }),
+    );
+    return result;
   }
 
   async update(id: number, data: Prisma.ParcoursNiveauUpdateInput) {

@@ -42,6 +42,14 @@ export class EnseignantService {
     });
   }
 
+  async findAllType() {
+    const data = await this.prisma.enseignant.groupBy({
+      by: ['type'],
+      orderBy: { type: 'asc' },
+    });
+    return data;
+  }
+
   async findOne(id: number) {
     return this.prisma.enseignant.findUnique({ where: { id } });
   }

@@ -120,6 +120,7 @@ model EncadrementSoutenance {
   id              Int        @id @default(autoincrement())
   enseignantId    Int
   Objet           String
+  anneeUniversitaire  String @default("2022-2023")
   nbEncadrement   Int?
   nbSoutenance    Int?
   tauxEncadrement Float?

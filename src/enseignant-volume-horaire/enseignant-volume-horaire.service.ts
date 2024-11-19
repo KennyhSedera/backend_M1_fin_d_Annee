@@ -113,7 +113,10 @@ export class EnseignantVolumeHoraireService {
     const datas = {
       id: recordsTheo[0]?.enseignant.id,
       codeEns: recordsTheo[0]?.enseignant.codeEns,
-      nom: recordsTheo[0]?.enseignant.nom + recordsTheo[0]?.enseignant.prenom,
+      nom:
+        recordsTheo[0]?.enseignant.nom +
+        ' ' +
+        recordsTheo[0]?.enseignant.prenom,
       grade: recordsTheo[0]?.enseignant.grade.title,
       contact: recordsTheo[0]?.enseignant.contact,
       CIN: recordsTheo[0]?.enseignant.CIN,
@@ -165,7 +168,7 @@ export class EnseignantVolumeHoraireService {
       if (!enseignantMap.has(enseignantId)) {
         enseignantMap.set(enseignantId, {
           code: enseignant.codeEns,
-          nom: enseignant.nom + enseignant.prenom,
+          nom: enseignant.nom + ' ' + enseignant.prenom,
           grade: enseignant.grade.title,
           contact: enseignant.contact,
           CIN: enseignant.CIN,
@@ -352,6 +355,8 @@ export class EnseignantVolumeHoraireService {
       },
       select: {
         id: true,
+        enseignantId: true,
+        volumeHoraireId: true,
         enseignant: {
           select: {
             codeEns: true,
@@ -379,28 +384,33 @@ export class EnseignantVolumeHoraireService {
     });
 
     const parcoursNiveau = await this.prisma.parcoursNiveau.findMany({
-      select: {
-        anneeUniversitaire: true,
-        nombreGroupesET: true,
-        nombreGroupesED: true,
-        nombreGroupesEP: true,
+      where: {
+        anneeUniversitaire: data.anneeUniversitaire,
         parcours: {
-          select: {
-            nom: true,
-            mention: {
-              select: {
-                nom: true,
-              },
-            },
-          },
+          nom: data.parcours,
+          mention: { nom: data.mention },
         },
       },
     });
 
+    if (parcoursNiveau.length <= 0) {
+      return {
+        message: `Aucune donnée trouvée pour l'année universitaire ${data.anneeUniversitaire}, mention ${data.mention}, et parcours ${data.parcours}.`,
+        enseignants: [],
+      };
+    }
     const formattedResult = result.reduce((acc, enseignantData) => {
       let enseignantEntry = acc.find(
         (entry) =>
           entry.enseignant.codeEns === enseignantData.enseignant.codeEns,
+      );
+
+      const pnFilered = parcoursNiveau.find(
+        (el) =>
+          el.niveauId ===
+            enseignantData.volumeHoraire.uniteEnseignement.niveauId &&
+          el.parcoursId ===
+            enseignantData.volumeHoraire.uniteEnseignement.parcoursId,
       );
 
       if (!enseignantEntry) {
@@ -412,6 +422,9 @@ export class EnseignantVolumeHoraireService {
       }
 
       enseignantEntry.volumeHoraire.push({
+        id: enseignantData.id,
+        enseignantId: enseignantData.enseignantId,
+        volumeHoraireId: enseignantData.volumeHoraireId,
         elementConstitutif: enseignantData.volumeHoraire.elementConstitutif,
         semestre: enseignantData.volumeHoraire.semestre,
         VH:
@@ -419,20 +432,17 @@ export class EnseignantVolumeHoraireService {
           (enseignantData.volumeHoraire.ed || 0) +
           (enseignantData.volumeHoraire.ep || 0),
         ET_Base: enseignantData.volumeHoraire.et || 0,
-        ET_GR: parcoursNiveau[0]?.nombreGroupesET || 1,
+        ET_GR: pnFilered.nombreGroupesET,
         ET_TT:
-          (enseignantData.volumeHoraire.et || 0) *
-          (parcoursNiveau[0]?.nombreGroupesET || 1),
+          (enseignantData.volumeHoraire.et || 0) * pnFilered.nombreGroupesET,
         ED_Base: enseignantData.volumeHoraire.ed || 0,
-        ED_GR: parcoursNiveau[0]?.nombreGroupesED || 1,
+        ED_GR: pnFilered.nombreGroupesED,
         ED_TT:
-          (enseignantData.volumeHoraire.ed || 0) *
-          (parcoursNiveau[0]?.nombreGroupesED || 1),
+          (enseignantData.volumeHoraire.ed || 0) * pnFilered.nombreGroupesED,
         EP_Base: enseignantData.volumeHoraire.ep || 0,
-        EP_GR: parcoursNiveau[0]?.nombreGroupesEP || 1,
+        EP_GR: pnFilered.nombreGroupesEP,
         EP_Total:
-          (enseignantData.volumeHoraire.ep || 0) *
-          (parcoursNiveau[0]?.nombreGroupesEP || 1),
+          (enseignantData.volumeHoraire.ep || 0) * pnFilered.nombreGroupesEP,
       });
 
       return acc;

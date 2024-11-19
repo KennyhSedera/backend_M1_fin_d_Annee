@@ -24,6 +24,11 @@ export class ParcoursNiveauController {
     return this.service.findAll();
   }
 
+  @Get('/annee-universitaire')
+  findAnnee() {
+    return this.service.findAnnee();
+  }
+
   @Put(':id')
   updatre(
     @Param('id') id: string,
