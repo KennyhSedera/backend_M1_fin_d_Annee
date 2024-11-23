@@ -51,7 +51,32 @@ export class EnseignantService {
   }
 
   async findOne(id: number) {
-    return this.prisma.enseignant.findUnique({ where: { id } });
+    return this.prisma.enseignant.findUnique({
+      where: { id },
+      include: {
+        grade: true,
+        encadrementSoutenances: {
+          include: {
+            niveau: true,
+            parcours: true,
+          },
+        },
+        enseignantVolumeHoraire: {
+          include: {
+            volumeHoraire: {
+              include: {
+                uniteEnseignement: {
+                  include: {
+                    niveau: true,
+                    parcours: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   async findAllDecomptTheo() {

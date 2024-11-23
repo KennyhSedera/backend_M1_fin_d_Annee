@@ -59,6 +59,7 @@ export class EncadrementSoutenanceService {
   async findAllGroupByEns(value: parcoursNiveauDto) {
     const result = await this.prisma.enseignant.findMany({
       select: {
+        id: true,
         codeEns: true,
         nom: true,
         prenom: true,
@@ -91,7 +92,10 @@ export class EncadrementSoutenanceService {
           )
           .map((hc) => ({
             id: hc.id,
-            uniteEnseignement: hc.Objet,
+            enseignantId: ens.id,
+            parcoursId: hc.parcours.id,
+            niveauId: hc.niveau.id,
+            Objet: hc.Objet,
             niveau: hc.niveau.nom,
             nbEncadrement: hc.nbEncadrement,
             tauxEncadrement: hc.tauxEncadrement,
