@@ -48,6 +48,11 @@ export class VolumeHoraireService {
     return vh;
   }
 
+  async countAll() {
+    const result = await this.prisma.volumeHoraire.count();
+    return result;
+  }
+
   async findAllByParcoursEns(parcours: string) {
     const parcoursNiveaux = await this.prisma.parcoursNiveau.findMany({
       where: {
