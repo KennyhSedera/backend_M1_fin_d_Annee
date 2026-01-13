@@ -1,9 +1,26 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 Backend M1 Fin d’Année
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend de projet développé avec **NestJS**, **Prisma** et **TypeScript** pour la gestion d’une API REST robuste, scalable et testée.
+
+---
+
+## 🧠 Présentation
+
+Ce backend est une API construite avec **NestJS**, destinée à servir de serveur pour une application métier (CRUD, authentification, gestion des fichiers, etc.).  
+Il utilise **Prisma** comme ORM et contient des tests unitaires et E2E pour assurer la qualité du code.
+
+---
+
+## 🛠️ Technologies & outils
+
+✔ **NestJS** — framework backend Node.js  
+✔ **Prisma** — ORM moderne pour Node.js  
+✔ **TypeScript** — typage fort  
+✔ **Jest** — tests (unit + e2e)  
+✔ **Uploads** — gestion des fichiers  
+✔ **ESLint / Prettier** — qualité de code
+
+---
 
   <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
     <p align="center">
