@@ -1,5 +1,5 @@
 datasource db {
-  provider = "pgsqi"
+  provider = "pgsql"
   url      = env("DATABASE_URL")
 }
 
